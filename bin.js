@@ -1,21 +1,18 @@
 const {join} = require('path')
-const buildEnv = require('./lib/build-env')
-const makefile = require('./lib/makefile')
-const make = require('./lib/make')
+const makeFirmware = require('.')
+const conf = require('rc')('tifw')
 
 async function main() {
-  const files = [
-    join(__dirname, 'main.cpp'),
-    join(__dirname, 'chiptypes.cpp')
-  ]
-
+  const usage = new Error(`Usage:
+  tifw FILE1 [MORE FILES ...] --name NAME
+    `)
   try {
-    const buildDir = await buildEnv(files)
-    console.log('building in', buildDir)
-    makefile(buildDir, files)
-    await make(buildDir, 'foo')
+    const files = conf._
+    const name = conf.name || 'tifw'
+    if (!files.length) throw isage
+    await makeFirmware(name, files)
   } catch(err) {
-    console.error(err.stack)
+    console.error(err.message)
     process.exit(1)
   }
 }
